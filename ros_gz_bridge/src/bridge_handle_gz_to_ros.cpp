@@ -54,7 +54,8 @@ void BridgeHandleGzToRos::StartPublisher()
   this->ros_publisher_ = this->factory_->create_ros_publisher(
     this->ros_node_,
     this->config_.ros_topic_name,
-    this->config_.publisher_queue_size);
+    this->config_.publisher_queue_size,
+    this->config_.ros_durability == BridgeDurability::TRANSIENT_LOCAL);
 }
 
 bool BridgeHandleGzToRos::HasSubscriber() const

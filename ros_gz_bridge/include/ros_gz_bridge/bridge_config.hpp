@@ -30,6 +30,11 @@ enum class BridgeDirection
   ROS_TO_GZ = 3,
 };
 
+enum class BridgeDurability {
+    VOLATILE = 0,
+    TRANSIENT_LOCAL = 1
+};
+
 /// \brief Default subscriber queue length
 static constexpr size_t kDefaultSubscriberQueue = 10;
 
@@ -41,6 +46,8 @@ static constexpr bool kDefaultLazy = false;
 
 // \brief Default bridge connectivity
 static constexpr BridgeDirection kDefaultDirection = BridgeDirection::BIDIRECTIONAL;
+
+static constexpr BridgeDurability kDefaultDurability = BridgeDurability::VOLATILE;
 
 struct BridgeConfig
 {
@@ -68,6 +75,8 @@ struct BridgeConfig
 
   /// \brief Flag to change the "laziness" of the bridge
   bool is_lazy = kDefaultLazy;
+
+  BridgeDurability ros_durability = kDefaultDurability;
 };
 
 /// \brief Generate a group of BridgeConfigs from a YAML String

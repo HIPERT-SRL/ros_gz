@@ -46,7 +46,8 @@ public:
   create_ros_publisher(
     rclcpp::Node::SharedPtr ros_node,
     const std::string & topic_name,
-    size_t queue_size)
+    size_t queue_size,
+    bool persistent = false)
   {
     // Allow QoS overriding
     auto options = rclcpp::PublisherOptions();
@@ -59,9 +60,12 @@ public:
       },
     };
 
+    rclcpp::QoS qos(queue_size);
+    persistent ? qos.transient_local() : qos.durability_volatile();
+
     std::shared_ptr<rclcpp::Publisher<ROS_T>> publisher =
       ros_node->create_publisher<ROS_T>(
-      topic_name, rclcpp::QoS(rclcpp::KeepLast(queue_size)), options);
+      topic_name, qos, options);
     return publisher;
   }
 

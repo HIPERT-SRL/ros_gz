@@ -37,7 +37,8 @@ public:
   create_ros_publisher(
     rclcpp::Node::SharedPtr ros_node,
     const std::string & topic_name,
-    size_t queue_size) = 0;
+    size_t queue_size,
+    bool persistent = false) = 0;
 
   virtual
   gz::transport::Node::Publisher

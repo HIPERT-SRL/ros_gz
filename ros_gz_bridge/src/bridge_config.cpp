@@ -34,11 +34,15 @@ constexpr const char kDirection[] = "direction";
 constexpr const char kPublisherQueue[] = "publisher_queue";
 constexpr const char kSubscriberQueue[] = "subscriber_queue";
 constexpr const char kLazy[] = "lazy";
+constexpr const char kDurability[] = "ros_durability";
 
 // Comparison strings for bridge directions
 constexpr const char kBidirectional[] = "BIDIRECTIONAL";
 constexpr const char kGzToRos[] = "GZ_TO_ROS";
 constexpr const char kRosToGz[] = "ROS_TO_GZ";
+
+constexpr const char kVolatile[] = "VOLATILE";
+constexpr const char kTransientLocal[] = "TRANSIENT_LOCAL";
 
 /// \brief Parse a single sequence entry into a BridgeConfig
 /// \param[in] yaml_node A node containing a map of bridge config params
@@ -69,6 +73,7 @@ std::optional<BridgeConfig> parseEntry(const YAML::Node & yaml_node)
   const auto gz_topic_name = getValue(kGzTopicName);
   const auto gz_type_name = getValue(kGzTypeName);
   const auto direction = getValue(kDirection);
+  const auto durability = getValue(kDurability);
 
   if (!topic_name.empty() && !ros_topic_name.empty()) {
     RCLCPP_ERROR(
@@ -106,6 +111,21 @@ std::optional<BridgeConfig> parseEntry(const YAML::Node & yaml_node)
       RCLCPP_ERROR(
         logger,
         "Could not parse entry: invalid direction [%s]", direction.c_str());
+      return {};
+    }
+  }
+
+  ret.ros_durability = BridgeDurability::VOLATILE;
+
+  if (yaml_node[kDurability]) {
+    if (durability == kVolatile) {
+      ret.ros_durability = BridgeDurability::VOLATILE;
+    } else if (durability == kTransientLocal) {
+      ret.ros_durability = BridgeDurability::TRANSIENT_LOCAL;
+    } else {
+      RCLCPP_ERROR(
+        logger,
+        "Could not parse entry: invalid durability [%s]", durability.c_str());
       return {};
     }
   }
